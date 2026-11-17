@@ -33,7 +33,9 @@
      1.15px  1.15px 0 #fff;  transition:transform 0.15s ease-in-out; }
         
         .title{ top:-10vh; left: -5vw; font-family: 'nk57 butter'; display: grid; grid-column: 2; grid-row: 1; margin: 0 5vw; font-size: 3.5rem; text-align: center; align-self: center; position: relative; color: hsl(0, 100%, 99%); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
-   
+            
+        .overlay_button{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; border: none; cursor: pointer; z-index: 1000; }
+
    </style>
 </head>
 <body>
@@ -54,10 +56,17 @@
            Simon Says Sell
         </div>
         <div class="buttons">
-            <button>button </button>
+            <button popovertarget="test dialog">button </button>
             <button>button </button>
             <button>button </button>
         </div>
     </div>
+
+    <dialog id="test dialog" popover style="background: #0e070069; backdrop-filter: blur(10px); margin: 0 auto; padding: 0 auto;  overflow: hidden; height: 100vh; width: 100vw; border: none;">
+        <button popovertarget="test dialog" popvertargetaction="toggle" class="overlay_button"></button>
+        <iframe src="test.html" width="100%" height="100%" frameborder="0" ></iframe>
+       
+    </dialog>
+
 </body>
 </html>
