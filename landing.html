@@ -26,8 +26,10 @@
         .right{  Grid-template-rows: 70vh 30vh minmax(0px,0fr); display: grid; overflow: hidden;  grid-template-columns: 1fr;  }
 
         .textbox{ text-align: left; position: relative; justify-content: center; margin: 12vh 9vw; grid-row: 2; width: 33vw; position: relative;  font-size: 21px; max-height: 15vw;  }
-        .card{ top:22vh; grid-row: 1; margin: 0 10vw; max-width: 21vw; max-height: 42vh; position: relative; transition: transform 0.42s ease; transform-style: preserve-3d; border-radius: 4.2px; box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.5); }
-        .card:hover{ transform: scale(1.05) rotateX(5deg) rotateY(5deg); transition: transform 0.42s ease-in-out; box-shadow: 5px 8px 30px rgba(0, 0, 0, 0.3); }
+
+        /* Card tilts toward the cursor (--rx / --ry are set by the script at the bottom) */
+        .card{ top:22vh; grid-row: 1; margin: 0 10vw; max-width: 21vw; max-height: 42vh; position: relative; transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 0.15s ease-out, box-shadow 0.3s ease; transform-style: preserve-3d; border-radius: 4.2px; box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.5); }
+        .card:hover{ transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1.05); box-shadow: 5px 8px 30px rgba(0, 0, 0, 0.3); }
        
         .buttons{ margin-left:15vw; grid-row: 2;  align-self: center; height: 50vh;}
         .buttons button{ z-index: 1000; user-select: none; text-align: end; font-family: 'nk57 butter'; font-size: 42px;  width: 32vw; background-color: hsla(0, 100%, 99%, 0); color: hsl(0, 0%, 100%); border: none; cursor: pointer; border-radius: 4px; transition: transform 0.42s ease; }
@@ -39,36 +41,33 @@
         
         .title{ top:-10vh; left: 2vw;  font-family: 'nk57 butter'; display: grid; grid-row: 1; margin: 0 5vw; font-size: 3.5rem; text-align: center; align-self: center; position: relative; color: hsl(0, 100%, 99%); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
             
-        .overlay_button{ position: absolute; top: 1; left: 0; width: 100%; height: 100%; background: transparent; border: none; cursor: pointer; z-index: 0; }
+        .overlay_button{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; border: none; cursor: pointer; z-index: 0; }
 
 
         dialog[popover] {
+            padding: 0;
+            width: 66vw;            /* just wide enough for the text column */
+            height: 100vh;
+            border: none;
+            background: transparent;
+            overflow: hidden;
+            align-self: center;
+            justify-content: center;
+        }
 
-    padding: 0;
-    width: 66vw;            /* just wide enough for the text column */
-    height: 100vh;
-    border: none;
-    background: transparent;
-    overflow: hidden;
-    align-self: center;
-    justify-content: center;
-}
+        dialog[popover]::backdrop {
+            background: none; 
+            backdrop-filter: blur(11px);
+        }
 
-dialog[popover]::backdrop {
-
-    background: none; 
-    backdrop-filter: blur(11px);
-}
-
-dialog iframe {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    border: none;
-    align-items: center;
-    justify-content: center;
-    
-}
+        dialog iframe {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            border: none;
+            align-items: center;
+            justify-content: center;
+        }
    </style>
 </head>
 <body>
@@ -95,23 +94,66 @@ dialog iframe {
         </div>
     </div>
 
-    
-
-</body>
-</html>
-<dialog id="test dialog" popover >
-        <button popovertarget="test dialog" popvertargetaction="toggle" class="overlay_button"></button>
+    <dialog id="test dialog" popover >
+        <button popovertarget="test dialog" popovertargetaction="toggle" class="overlay_button"></button>
         <iframe src="test.html" width="100%" height="100%" frameborder="0" ></iframe>
-       
     </dialog>
 
     <dialog id="two dialog" popover style="background: #0000007c;">
         <iframe src="two.html" width="100%" height="100%" frameborder="0" ></iframe>
-       
     </dialog>
 
     <dialog id="three dialog" popover >
-        <button popovertarget="three dialog" popvertargetaction="toggle" class="overlay_button"></button>
+        <button popovertarget="three dialog" popovertargetaction="toggle" class="overlay_button"></button>
         <iframe src="three.html" width="100%" height="100%" frameborder="0" ></iframe>
-       
     </dialog>
+
+    <script>
+        const card = document.querySelector('.card');
+        const MAX_TILT = 50; // degrees at the edge of the screen
+
+        const clamp = (v) => Math.max(-1, Math.min(1, v));
+
+        const section = document.querySelector('body');
+        const mouse_down = false;
+        const can_tilt = true;
+        const pointermove = document.addEventListener('pointermove');
+
+        document.addEventListener('click', (e) => {
+            
+
+            if  (!pointermove) {
+
+                card.style.setProperty('--rx', '0deg');
+                card.style.setProperty('--ry', '0deg');
+            
+            }
+
+        });
+
+        document.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect();
+            const dx = (e.clientX - (r.left + r.width / 2)) / (window.innerWidth / 2);
+            const dy = (e.clientY - (r.top + r.height / 2)) / (window.innerHeight / 2);
+
+            const openPopovers = document.querySelectorAll(':popover-open');
+
+            if (openPopovers.length == 0 && can_tilt) {
+                card.style.setProperty('--ry', clamp(dx) * MAX_TILT + 'deg');
+                card.style.setProperty('--rx', -clamp(dy) * MAX_TILT + 'deg');
+            }
+            else {
+                card.style.setProperty('--rx', '0deg');
+                card.style.setProperty('--ry', '0deg');
+            }
+        });
+
+        // ease back to flat when the cursor leaves the window
+        section.addEventListener('mouseleave', () => {
+            card.style.setProperty('--rx', '0deg');
+            card.style.setProperty('--ry', '0deg');
+        });
+    </script>
+
+</body>
+</html>
