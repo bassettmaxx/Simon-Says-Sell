@@ -77,7 +77,7 @@
         <div class="textbox">
             Simon Says Sell is
             my answer to the question: <br></br>
-            "How can I provide value to my community, with the skills and resources I already have"
+            "How can I provide value to my local bussinesses, with the skills and resources I already have"
         </div>
     </div>
 
@@ -117,17 +117,18 @@
         const section = document.querySelector('body');
         const mouse_down = false;
         const can_tilt = true;
-        const pointermove = document.addEventListener('pointermove');
 
         document.addEventListener('click', (e) => {
             
 
-            if  (!pointermove) {
+            if  (document.addEventListener('pointermove', (e))) {
 
-                card.style.setProperty('--rx', '0deg');
-                card.style.setProperty('--ry', '0deg');
+                return;
             
             }
+
+            card.style.setProperty('--rx', '0deg');
+            card.style.setProperty('--ry', '0deg');
 
         });
 
@@ -149,7 +150,7 @@
         });
 
         // ease back to flat when the cursor leaves the window
-        section.addEventListener('mouseleave', () => {
+        section.addEventListener('mouseleave', (e) => {
             card.style.setProperty('--rx', '0deg');
             card.style.setProperty('--ry', '0deg');
         });
