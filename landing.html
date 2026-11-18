@@ -20,8 +20,9 @@
             -ms-user-select: none;     /* IE 10 and IE 11 */
             user-select: none;         /* Standard syntax */
             cursor: pointer;           /* Ensures the hand cursor shows instead of a text I-beam */
-            font-family:'nk57 reg';  background: #0e0700; display: flex;  height: 100vh; width: 100vw;  color: hsl(0, 100%, 99%); max-width:100vw;  overflow-x: hidden; text-align: center; align-items: center; justify-content: center; }
-        body{  grid-template-columns: 30vw 60vw; display: grid; }
+            font-family:'nk57 reg';  background: #0e0700;  overflow:hidden; color: #fff;}
+        .main_page{display: flex;  height: 100vh; width: 100vw;  color: hsl(0, 100%, 99%); max-width:100vw;  overflow-x: hidden; text-align: center; align-items: center; justify-content: center;}
+        .columns{  grid-template-columns: 30vw 60vw; display: grid; }
         .left{  Grid-template-rows: 50vh 50vh minmax(0px,0fr); display: grid; }
         .right{  Grid-template-rows: 70vh 30vh minmax(0px,0fr); display: grid; overflow: hidden;  grid-template-columns: 1fr;  }
 
@@ -34,13 +35,15 @@
         .buttons{ margin-left:15vw; grid-row: 2;  align-self: center; height: 50vh;}
         .buttons button{ z-index: 1000; user-select: none; text-align: end; font-family: 'nk57 butter'; font-size: 42px;  width: 32vw; background-color: hsla(0, 100%, 99%, 0); color: hsl(0, 0%, 100%); border: none; cursor: pointer; border-radius: 4px; transition: transform 0.42s ease; }
         .buttons button:hover{ transform: scale(1.1) translate3d(-26px, -1px, 10px); background-color: hsla(0, 0%, 100%, 0); color: hsl(0, 0%, 1%); text-shadow: 
-    -1.15px -1.15px 0 #fff,  
-     1.15px -1.15px 0 #fff,
-    -1.15px  1.15px 0 #fff,
-     1.15px  1.15px 0 #fff;  transition:transform 0.15s ease-in-out; }
+    -1.0px -1.0px 0 #fff,  
+     1.0px -1.0px 0 #fff,
+    -1.0px  1.0px 0 #fff,
+     1.0px  1.0px 0 #fff;  transition:transform 0.15s ease-in-out; }
         
         .title{ top:-10vh; left: 2vw;  font-family: 'nk57 butter'; display: grid; grid-row: 1; margin: 0 5vw; font-size: 3.5rem; text-align: center; align-self: center; position: relative; color: hsl(0, 100%, 99%); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
-            
+        
+        .sub-title{ letter-spacing: 4.2px; top:2vh; left: 11vw;  font-family: 'nk57 butter'; margin: 0 5vw; font-size: 1.0rem; text-align: center; align-self: center; position: relative; color: hsl(0, 100%, 99%); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+
         .overlay_button{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; border: none; cursor: pointer; z-index: 0; }
 
 
@@ -68,49 +71,75 @@
             align-items: center;
             justify-content: center;
         }
+
+        .slidebar{ position: relative; bottom: 0vh; left: 0vw; width: 100%; height: 100%; background-color: rgb(249, 248, 248); backdrop-filter: blur(5px); z-index: 9999; display: none; }
+
    </style>
+   
 </head>
+
+
+   
 <body>
-    <div class="left">
-        <img src="simon.jpg" alt="Simon Says Sell Logo" class="card">
+    <!-- <div style="place-items: center; position:absolute; width: 100%; user-select: none;  display: grid; height: 100%; z-index: -1; " >
+        <div>☮</div>
+       <label for="volume">Volume: <span id="vol-value" style="width: 50vw; " >50</span></label>
+       <input style="width: 50vw; accent-color: #fff;"  type="range" id="volume" name="volume" min="0" max="100" value="50" step="1">
+    </div> -->
 
-        <div class="textbox">
-            Simon Says Sell is
-            my answer to the question: <br></br>
-            "How can I provide value to my local bussinesses, with the skills and resources I already have"
+    <div class="main_page">
+         
+        <div class="columns"> 
+
+            <div class="left">
+                <img src="simon.jpg" alt="Simon Says Sell Logo" class="card">
+                
+                <div class="textbox">
+                    Simon Says Sell is
+                    my answer to the question: <br></br>
+                    "How can I provide value to my local bussinesses, with the skills and resources I already have"
+                </div>
+
+                
+
+            </div>
+
+
+
+            <div class="right">
+                
+                <div  class="title">
+                simon says sell
+                <p  class="sub-title">advertising studio</p>
+                </div>
+                
+                <div class="buttons">
+                    <button popovertarget="test dialog">XYZ</button>
+                    <button popovertarget="test dialog">DEBUT</button>
+                    <button popovertarget="two dialog">ROADMAP </button>
+                    <button popovertarget="three dialog">SERVICES </button>
+                </div>
+            </div>
+
+            <dialog id="test dialog" popover >
+                <button popovertarget="test dialog" popovertargetaction="toggle" class="overlay_button"></button>
+                <iframe src="test.html" width="100%" height="100%" frameborder="0" ></iframe>
+            </dialog>
+
+            <dialog id="two dialog" popover style="background: #0000007c;">
+                <iframe src="two.html" width="100%" height="100%" frameborder="0" ></iframe>
+            </dialog>
+
+            <dialog id="three dialog" popover >
+                <button popovertarget="three dialog" popovertargetaction="toggle" class="overlay_button"></button>
+                <iframe src="three.html" width="100%" height="100%" frameborder="0" ></iframe>
+            </dialog>
         </div>
     </div>
-
-    
-
-    <div class="right">
-        <div  class="title">
-           simon says sell
-        </div>
-        <div class="buttons">
-            <button popovertarget="test dialog">LAUNCH</button>
-            <button popovertarget="two dialog">bbbbbbbbbbbbb </button>
-            <button popovertarget="three dialog">button </button>
-        </div>
-    </div>
-
-    <dialog id="test dialog" popover >
-        <button popovertarget="test dialog" popovertargetaction="toggle" class="overlay_button"></button>
-        <iframe src="test.html" width="100%" height="100%" frameborder="0" ></iframe>
-    </dialog>
-
-    <dialog id="two dialog" popover style="background: #0000007c;">
-        <iframe src="two.html" width="100%" height="100%" frameborder="0" ></iframe>
-    </dialog>
-
-    <dialog id="three dialog" popover >
-        <button popovertarget="three dialog" popovertargetaction="toggle" class="overlay_button"></button>
-        <iframe src="three.html" width="100%" height="100%" frameborder="0" ></iframe>
-    </dialog>
 
     <script>
         const card = document.querySelector('.card');
-        const MAX_TILT = 50; // degrees at the edge of the screen
+        const MAX_TILT = 42; // degrees at the edge of the screen
 
         const clamp = (v) => Math.max(-1, Math.min(1, v));
 
@@ -120,16 +149,25 @@
 
         document.addEventListener('click', (e) => {
             
-
             if  (document.addEventListener('pointermove', (e))) {
 
                 return;
             
             }
 
-            card.style.setProperty('--rx', '0deg');
-            card.style.setProperty('--ry', '0deg');
+            const hovered = document.querySelector('.buttons');
+            const bt = e.target.closest('.buttons button');
 
+            document.addEventListener('mouseover', (event) => {
+                bt = event.target.closest('.buttons button');
+
+                
+            });
+
+            if (bt) {
+                card.style.setProperty('--rx', '0deg');
+                card.style.setProperty('--ry', '0deg');
+            }
         });
 
         document.addEventListener('pointermove', (e) => {
