@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Says Sell</title>
+
+<style>
+    @font-face {
+        font-family: 'nk57 reg';
+        src: url('Fonts/nk57_monospace/NK57 Monospace Sc Lt.otf') format('opentype');
+    }
+
+    @font-face {
+        font-family: 'nk57 butter';
+        src: url('Fonts/nk57_monospace/NK57 Monospace Ex Lt.otf') format('opentype');
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+        margin: 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        background: #0e07003a;
+        color: hsl(0, 100%, 99%);
+        font-family: 'nk57 reg', monospace;
+    }
+
+    /* ---------- STAGE: top row (image + title), middle row (roadmap), bottom row (info) ---------- */
+    .stage {
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr auto 1fr;
+        gap: 2vw;
+        padding: 4vh 5vw 0;
+    }
+
+    .slot {
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .slot.show { opacity: 1; transform: none; }
+
+    /* image: top left */
+    .slot_image {
+        grid-column: 1;
+        grid-row: 1;
+        border: 0px solid rgb(0, 0, 0); 
+        background: #00000067 center / cover no-repeat;
+        min-height: 0;
+        top: 5vh;
+        position: relative;
+        border-radius: 9px;
+        filter: blur(0.2px);
+    }
+
+  
+
+    /* title: top right */
+    .slot_title {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'nk57 butter', monospace;
+        font-size: clamp(28px, 5vw, 72px);
+        line-height: 1.1;
+        text-align: center;
+    }
+
+    /* info box: lower half, full width */
+    .slot_info {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        border: 0px solid white;
+        padding: 3vh 3vw;
+        font-size: clamp(14px, 1.4vw, 20px);
+        line-height: 1.6;
+        text-align: left;
+        overflow-y: auto;
+        min-height: 0;
+        background: #00000067;
+    }
+
+    /* ---------- ROADMAP (your original line + buttons) ---------- */
+    .roadmap_wrap {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        position: relative;
+        height: 14vh;
+    }
+
+    .roadmap_line {
+        position: absolute;
+        top: 75%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 1px;
+        background-color: white;
+        justify-content: space-between;
+        align-content: center;
+        display: flex;
+    }
+
+    .roadmap_button {
+        background-color: hsla(0, 0%, 0%, 0);
+        border: none;
+        width: 5vw;
+        height: 5vh;
+        cursor: pointer;
+        color: white;
+        font-size: 20px;
+        padding: 20px;
+        font-family: 'nk57 butter', monospace;
+        display: grid;
+    }
+
+    .roadmap_button:hover *,
+    .roadmap_button:focus-visible *,
+    .roadmap_button.active * {
+        color: hsl(0, 0%, 0%);
+        text-shadow:
+            -1px -1px 0 #fff,
+             1px -1px 0 #fff,
+            -1px  1px 0 #fff,
+             1px  1px 0 #fff;
+    }
+
+    .roadmap_button:focus-visible { outline: 1px dashed white; outline-offset: 4px; }
+
+    .roadmap_number {
+        position: relative;
+        top: -4vh;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        opacity: 1;
+        font-size: 21px;
+        font-family: 'nk57 reg', monospace;
+    }
+
+    .roadmap_milestone {
+        position: relative;
+        top: -6vh;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        font-size: 21px;
+    }
+
+    .roadmap_line   { transition: background-color 0.25s ease; }
+    .roadmap_button { transition: opacity 0.25s ease; }
+
+    /* content visible: fade the line and every button except the active one */
+    .stage:has(.slot.show) .roadmap_line { background-color: hsla(0, 0%, 100%, 0.33); }
+    .stage:has(.slot.show) .roadmap_button:not(.active) { opacity: 0.33; }
+
+    @media (max-width: 700px) {
+        .stage { grid-template-columns: 1fr; grid-template-rows: 22vh auto auto 1fr; padding-bottom: 3vh; }
+        .slot_image { grid-column: 1; grid-row: 1; }
+        .slot_title { grid-column: 1; grid-row: 2; }
+        .roadmap_wrap { grid-row: 3; }
+        .slot_info  { grid-column: 1; grid-row: 4; }
+        .roadmap_button { width: 12vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .slot { transition: none; transform: none; }
+    }
+</style>
+</head>
+
+<body>
+    <main class="stage">
+        <div class="slot slot_image" id="slotImage"></div>
+        <h1 class="slot slot_title" id="slotTitle"></h1>
+        <div class="slot slot_info" id="slotInfo"></div>
+
+        <div class="roadmap_wrap">
+            <div class="roadmap_line">
+                <button class="roadmap_button" data-key="p"><div class="roadmap_milestone">P</div><div class="roadmap_number">1</div></button>
+                <button class="roadmap_button" data-key="rf"><div class="roadmap_milestone">RF</div><div class="roadmap_number">2</div></button>
+                <button class="roadmap_button" data-key="g"><div class="roadmap_milestone">G</div><div class="roadmap_number">3</div></button>
+                <button class="roadmap_button" data-key="h"><div class="roadmap_milestone">H</div><div class="roadmap_number">4</div></button>
+                <button class="roadmap_button" data-key="r"><div class="roadmap_milestone">R</div><div class="roadmap_number">5</div></button>
+            </div>
+        </div>
+    </main>
+
+<script>
+    /* ---------- CONTENT: one entry per button, keyed by data-key ---------- */
+    const content = {
+        p:  { title: "PROOF",  image: "https://i.pinimg.com/736x/70/f9/27/70f92723a2c15ec35c942f86e94afd08.jpg", info: "Info for P goes here." },
+        rf: { title: "REVIVAL FESTIVAL", image: "https://i.pinimg.com/736x/d9/2b/7e/d92b7e729f79f3e14079ed3f94d09f7e.jpg", info: "Info for RF goes here." },
+        g:  { title: "GROWTH",  image: "https://i.pinimg.com/1200x/54/5b/e2/545be2c66a05fc101e174f93aeabdd8a.jpg", info: "Info for G goes here." },
+        h:  { title: "HIRE",  image: "https://i.pinimg.com/736x/2b/72/d4/2b72d4fe4497c1fbbfe9c23b0640569e.jpg", info: "Info for H goes here.  nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. " },
+        r:  { title: "RETIRE",  image: "https://i.pinimg.com/736x/47/28/0a/47280aaf1c1a66e3f15ececf32990249.jpg", info: "Info for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. " }
+    };
+    // image: put a path like "Images/p.jpg" — empty shows the translucent placeholder box.
+
+    const slotImage = document.getElementById('slotImage');
+    const slotTitle = document.getElementById('slotTitle');
+    const slotInfo  = document.getElementById('slotInfo');
+    const buttons   = document.querySelectorAll('.roadmap_button');
+
+    /* ---------- SCRAMBLE TEXT ---------- */
+    const SCRAMBLE_CHARS = '01';
+    const scrambleFrames = new WeakMap();
+
+    function scramble(el, html, duration = 7) {
+        cancelAnimationFrame(scrambleFrames.get(el));
+        el.innerHTML = html;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        // collect text nodes so any tags inside the info HTML are left intact
+        const nodes = [];
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        const finals = nodes.map(n => n.nodeValue);
+        const total = finals.reduce((sum, t) => sum + t.length, 0);
+        if (!total) return;
+
+        // each character settles at its own time: roughly left to right, with jitter
+        let index = 0;
+        const reveals = finals.map(t =>
+            [...t].map(() => (index++ / total) * duration * 0.07 + Math.random() * duration * 0.3)
+        );
+
+        const start = performance.now();
+        let last = 0;
+
+        function frame(now) {
+            const t = now - start;
+            if (t >= duration) {
+                nodes.forEach((n, i) => (n.nodeValue = finals[i]));
+                return;
+            }
+            if (now - last > 35) {            // ~28 fps keeps the flicker readable
+                last = now;
+                nodes.forEach((n, i) => {
+                    n.nodeValue = [...finals[i]].map((c, j) =>
+                        /\s/.test(c) || t >= reveals[i][j]
+                            ? c
+                            : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+                    ).join('');
+                });
+            }
+            scrambleFrames.set(el, requestAnimationFrame(frame));
+        }
+        scrambleFrames.set(el, requestAnimationFrame(frame));
+    }
+
+    /* ---------- SHOW / HIDE ---------- */
+    let activeKey = null;
+
+    function show(key) {
+        const item = content[key];
+        if (!item) return;
+        if (activeKey === key) return;   // already showing: don't re-scramble on re-hover
+        activeKey = key;
+
+        buttons.forEach(b => b.classList.toggle('active', b.dataset.key === key));
+
+        slotImage.style.backgroundImage = item.image ? `url("${item.image}")` : 'none';
+        scramble(slotTitle, item.title, 600);
+        scramble(slotInfo, item.info, 900);
+
+        [slotImage, slotTitle, slotInfo].forEach(s => s.classList.add('show'));
+    }
+
+    function hide() {
+        activeKey = null;
+        buttons.forEach(b => b.classList.remove('active'));
+        [slotImage, slotTitle, slotInfo].forEach(s => s.classList.remove('show'));
+    }
+
+    buttons.forEach(btn => {
+        const key = btn.dataset.key;
+        // hover shows (mouse only, so a tap isn't shown then instantly hidden by its click)
+        btn.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(key); });
+        // keyboard focus shows
+        btn.addEventListener('focus', () => { if (btn.matches(':focus-visible')) show(key); });
+        // click toggles: hides if this button's content is already visible
+        btn.addEventListener('click', () => (activeKey === key ? hide() : show(key)));
+    });
+</script>
+</body>
+</html>
