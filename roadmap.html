@@ -136,7 +136,7 @@
 
     .roadmap_number {
         position: relative;
-        top: -4vh;
+        top: -3.5vh;
         left: 50%;
         transform: translateX(-50%);
         color: white;
@@ -161,6 +161,58 @@
     .stage:has(.slot.show) .roadmap_line { background-color: hsla(0, 0%, 100%, 0.33); }
     .stage:has(.slot.show) .roadmap_button:not(.active) { opacity: 0.33; }
 
+    /* ---------- NEXT MILESTONE MARKER: line down from the roadmap, text underneath ---------- */
+    .next_marker {
+        position: absolute;
+        top: 75%;
+        left: 50%;                       /* JS moves this under the chosen milestone */
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+    }
+    .next_marker_line {
+        width: 1px;
+        height: 12vh;
+        background: hsla(0, 0%, 100%, 0.6);
+    }
+    .next_marker_text {
+        margin: 1vh 0 0;
+        font-size: clamp(14px, 1.4vw, 20px);
+        opacity: 0.6;
+        white-space: nowrap;
+    }
+    .stage:has(.slot.show) .next_marker { opacity: 0; }
+
+    /* intro: centred in the upper half, hidden while content is showing */
+    .intro {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5vh;
+        text-align: center;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        margin-top: 22vh;
+    }
+    .intro_title {
+        margin: 0;
+        font-family: 'nk57 butter', monospace;
+        font-size: clamp(28px, 5vw, 72px);
+        line-height: 1.1;
+    }
+    .intro_hint {
+        margin: 0;
+        font-size: clamp(24px, 1.4vw, 20px);
+        opacity: 0.6;
+    }
+    .stage:has(.slot.show) .intro { opacity: 0; }
+
     @media (max-width: 700px) {
         .stage { grid-template-columns: 1fr; grid-template-rows: 22vh auto auto 1fr; padding-bottom: 3vh; }
         .slot_image { grid-column: 1; grid-row: 1; }
@@ -178,17 +230,26 @@
 
 <body>
     <main class="stage">
+        <div class="intro">
+            <h2 class="intro_title">MILESTONES</h2>
+            <p class="intro_hint">move mouse over a milestone to read it</p>
+        </div>
         <div class="slot slot_image" id="slotImage"></div>
         <h1 class="slot slot_title" id="slotTitle"></h1>
         <div class="slot slot_info" id="slotInfo"></div>
 
-        <div class="roadmap_wrap">
+        <div class="roadmap_wrap" id="roadmapWrap">
             <div class="roadmap_line">
                 <button class="roadmap_button" data-key="p"><div class="roadmap_milestone">P</div><div class="roadmap_number">1</div></button>
                 <button class="roadmap_button" data-key="rf"><div class="roadmap_milestone">RF</div><div class="roadmap_number">2</div></button>
                 <button class="roadmap_button" data-key="g"><div class="roadmap_milestone">G</div><div class="roadmap_number">3</div></button>
                 <button class="roadmap_button" data-key="h"><div class="roadmap_milestone">H</div><div class="roadmap_number">4</div></button>
                 <button class="roadmap_button" data-key="r"><div class="roadmap_milestone">R</div><div class="roadmap_number">5</div></button>
+            </div>
+
+            <div class="next_marker" id="nextMarker">
+                <div class="next_marker_line"></div>
+                <p class="next_marker_text">next milestone</p>
             </div>
         </div>
     </main>
@@ -199,15 +260,33 @@
         p:  { title: "PROOF",  image: "https://i.pinimg.com/736x/70/f9/27/70f92723a2c15ec35c942f86e94afd08.jpg", info: "Info for P goes here." },
         rf: { title: "REVIVAL FESTIVAL", image: "https://i.pinimg.com/736x/d9/2b/7e/d92b7e729f79f3e14079ed3f94d09f7e.jpg", info: "Info for RF goes here." },
         g:  { title: "GROWTH",  image: "https://i.pinimg.com/1200x/54/5b/e2/545be2c66a05fc101e174f93aeabdd8a.jpg", info: "Info for G goes here." },
-        h:  { title: "HIRE",  image: "https://i.pinimg.com/736x/2b/72/d4/2b72d4fe4497c1fbbfe9c23b0640569e.jpg", info: "Info for H goes here.  nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. " },
+        h:  { title: "HIRE",  image: "https://i.pinimg.com/736x/2b/72/d4/2b72d4fe4497c1fbbfe9c23b0640569e.jpg", info: "Info for H goes here.  nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. " },
         r:  { title: "RETIRE",  image: "https://i.pinimg.com/736x/47/28/0a/47280aaf1c1a66e3f15ececf32990249.jpg", info: "Info for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. nfo for R goes here. " }
     };
     // image: put a path like "Images/p.jpg" — empty shows the translucent placeholder box.
+
+    // which milestone the marker points to — use a key from `content` (p, rf, g, h, r)
+    const NEXT_MILESTONE = 'rf';
 
     const slotImage = document.getElementById('slotImage');
     const slotTitle = document.getElementById('slotTitle');
     const slotInfo  = document.getElementById('slotInfo');
     const buttons   = document.querySelectorAll('.roadmap_button');
+    const wrap      = document.getElementById('roadmapWrap');
+    const marker    = document.getElementById('nextMarker');
+
+    /* ---------- NEXT MILESTONE MARKER ---------- */
+    function placeNextMarker() {
+        const btn = document.querySelector(`.roadmap_button[data-key="${NEXT_MILESTONE}"]`);
+        if (!btn) { marker.style.display = 'none'; return; }
+        marker.style.display = '';
+        const w = wrap.getBoundingClientRect();
+        const b = btn.getBoundingClientRect();
+        marker.style.left = (b.left + b.width / 2 - w.left) + 'px';
+    }
+    placeNextMarker();
+    window.addEventListener('resize', placeNextMarker);
+    window.addEventListener('load', placeNextMarker);
 
     /* ---------- SCRAMBLE TEXT ---------- */
     const SCRAMBLE_CHARS = '01';
