@@ -52,7 +52,7 @@
                --text-out: how long the text takes to fade out */
             --hold: 1.4s;
             --fade: 0.7s;
-            --text-out: 0.4s;
+            --text-out: 0.75s;
 
             position: fixed;
             inset: 0;
@@ -64,7 +64,7 @@
             backdrop-filter: blur(10px);
             color: hsl(0, 100%, 99%);
             font-family: 'nk57 butter', monospace;
-            font-size: 84px;
+            font-size: 65px;
             text-align: center;
 
             /* background waits for --hold, then fades. visibility: hidden at the end
@@ -83,7 +83,7 @@
         @keyframes splash-out {
             0% { opacity: 0.99; backdrop-filter: blur(10px); visibility: visible; }
             
-            100%   { opacity: 0; backdrop-filter: blur(0px);  visibility: hidden; }
+            100%   { opacity: 0.1; backdrop-filter: blur(10px);  visibility: hidden; }
         }
 
         @keyframes text-in {
