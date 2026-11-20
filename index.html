@@ -190,8 +190,7 @@
             try {
                 const root = document.documentElement;
                 // if (!document.fullscreenElement && root.requestFullscreen) await root.requestFullscreen();
-                // if (screen.orientation && screen.orientation.lock) 
-                screen.orientation.lock('landscape');
+                if (screen.orientation) await screen.orientation.lock('landscape');
             } catch (e) {}
         }
 
