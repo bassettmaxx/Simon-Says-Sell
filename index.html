@@ -166,6 +166,66 @@
         }
         .desktop_btn:hover,
         .desktop_btn:focus-visible { background: white; color: hsl(0, 0%, 0%); outline: none; }
+
+        /* ---------- ROTATE NOTICE: desktop mode + touch device + portrait ----------
+           Desktop mode lays the page out at 1280px wide and shrinks it to fit the phone,
+           so this card is sized in vw (not px) to stay readable after the shrink. */
+        .rotate_notice {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            background: rgba(14, 7, 0, 0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: hsl(0, 100%, 99%);
+            font-family: 'nk57 butter', monospace;
+        }
+        @media (orientation: portrait) and (pointer: coarse) {
+            html.desktop-mode:not(.rotate-dismissed) .rotate_notice { display: flex; }
+        }
+        .rotate_card {
+            width: 80vw;
+            padding: 7vw 6vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5vw;
+            text-align: center;
+            border: 1px solid hsla(0, 0%, 100%, 0.4);
+            border-radius: 2vw;
+            background: #00000067;
+        }
+        .rotate_icon {
+            width: 9vw;
+            height: 16vw;
+            border: 0.6vw solid white;
+            border-radius: 1.8vw;
+            animation: rotate-hint 2.4s ease-in-out infinite;
+        }
+        @keyframes rotate-hint {
+            0%, 25%   { transform: rotate(0deg); }
+            60%, 100% { transform: rotate(-90deg); }
+        }
+        .rotate_text {
+            margin: 0;
+            font-size: 4.5vw;
+            line-height: 1.5;
+        }
+        .rotate_dismiss {
+            font-family: 'nk57 butter', monospace;
+            font-size: 3.5vw;
+            color: hsla(0, 0%, 100%, 0.6);
+            background: none;
+            border: none;
+            padding: 1vw;
+            cursor: pointer;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .rotate_icon { animation: none; transform: rotate(-90deg); }
+        }
     </style>
 </head>
 <body>
@@ -182,25 +242,19 @@
         </div>
     </div>
 
-    <script>
-        // Browsers only allow an orientation lock while fullscreen, and only after a tap,
-        // so this runs from the button click. Android Chrome supports it; iOS Safari doesn't,
-        // so there the visitor has to rotate their phone themselves.
-        async function enterLandscape() {
-            try {
-                const root = document.documentElement;
-                // if (!document.fullscreenElement && root.requestFullscreen) await root.requestFullscreen();
-                if (screen.orientation) await screen.orientation.lock('landscape');
-            } catch (e) {}
-        }
+    <div class="rotate_notice" role="dialog" aria-modal="true" aria-labelledby="rotateText">
+        <div class="rotate_card">
+            <div class="rotate_icon" aria-hidden="true"></div>
+            <p class="rotate_text" id="rotateText">rotate your phone for the best experience</p>
+            <button class="rotate_dismiss" id="rotateDismiss" type="button">continue anyway</button>
+        </div>
+    </div>
 
+    <script>
         document.getElementById('desktopBtn').addEventListener('click', () => {
             document.documentElement.classList.add('desktop-mode');
             document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
             try { sessionStorage.setItem('desktopMode', '1'); } catch (e) {}
-
-            // touch devices only: go fullscreen and lock to landscape (see enterLandscape)
-            if (matchMedia('(pointer: coarse)').matches) enterLandscape();
 
             // best effort: also tell the page inside the iframe, so its own card (if it has one)
             // doesn't show on a narrow desktop window. Only works when both files share an origin.
@@ -208,6 +262,11 @@
                 document.getElementById('landingFrame').contentDocument
                     .documentElement.classList.add('desktop-mode');
             } catch (e) {}
+        });
+
+        // lets the visitor past the rotate card (e.g. if their phone's rotation is locked)
+        document.getElementById('rotateDismiss').addEventListener('click', () => {
+            document.documentElement.classList.add('rotate-dismissed');
         });
     </script>
 </body>
