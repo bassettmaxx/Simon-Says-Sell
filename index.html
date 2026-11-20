@@ -191,7 +191,7 @@
                 const root = document.documentElement;
                 // if (!document.fullscreenElement && root.requestFullscreen) await root.requestFullscreen();
                 // if (screen.orientation && screen.orientation.lock) 
-                await screen.orientation.lock('landscape');
+                screen.orientation.lock('landscape');
             } catch (e) {}
         }
 
