@@ -164,9 +164,9 @@
     /* ---------- NEXT MILESTONE MARKER: line down from the roadmap, text underneath ---------- */
     .next_marker {
         position: absolute;
-        top: 75%;
+        top: 115%;
         left: 50%;                       /* JS moves this under the chosen milestone */
-        transform: translateX(-50%);
+        transform: translateX(-48%);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -208,7 +208,7 @@
     }
     .intro_hint {
         margin: 0;
-        font-size: clamp(24px, 1.4vw, 20px);
+        font-size: clamp(16px, 1.4vw, 20px);
         opacity: 0.6;
     }
     .stage:has(.slot.show) .intro { opacity: 0; }
@@ -232,7 +232,7 @@
     <main class="stage">
         <div class="intro">
             <h2 class="intro_title">MILESTONES</h2>
-            <p class="intro_hint">move mouse over a milestone to read it</p>
+            <p class="intro_hint">move your cursor to a milestone to read it, or scroll</p>
         </div>
         <div class="slot slot_image" id="slotImage"></div>
         <h1 class="slot slot_title" id="slotTitle"></h1>
@@ -249,7 +249,7 @@
 
             <div class="next_marker" id="nextMarker">
                 <div class="next_marker_line"></div>
-                <p class="next_marker_text">next milestone</p>
+                <p class="next_marker_text">current goal</p>
             </div>
         </div>
     </main>
@@ -369,6 +369,29 @@
         // click toggles: hides if this button's content is already visible
         btn.addEventListener('click', () => (activeKey === key ? hide() : show(key)));
     });
+
+    /* ---------- MOUSE WHEEL: cycle through milestones ---------- */
+    const keys = [...buttons].map(b => b.dataset.key);
+    const WRAP_SCROLL = true;        // false = stop at the first / last milestone
+    const WHEEL_COOLDOWN = 400;      // ms between steps; raise it if a trackpad skips milestones
+    let wheelLock = false;
+
+    window.addEventListener('wheel', e => {
+        // let a long info box scroll normally while it's showing
+        if (slotInfo.classList.contains('show') && slotInfo.contains(e.target)
+            && slotInfo.scrollHeight > slotInfo.clientHeight) return;
+        if (wheelLock || Math.abs(e.deltaY) < 4) return;
+        wheelLock = true;
+        setTimeout(() => (wheelLock = false), WHEEL_COOLDOWN);
+
+        const dir = e.deltaY > 0 ? 1 : -1;
+        // nothing showing yet: scroll down starts at the first, scroll up at the last
+        let i = activeKey ? keys.indexOf(activeKey) : (dir > 0 ? -1 : keys.length);
+        i += dir;
+        if (WRAP_SCROLL) i = (i + keys.length) % keys.length;
+        else i = Math.max(0, Math.min(keys.length - 1, i));
+        show(keys[i]);
+    }, { passive: true });
 </script>
 </body>
 </html>

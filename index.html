@@ -2,8 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" id="viewportMeta" content="width=device-width, initial-scale=1.0">
     <title>Simon Says Sell</title>
+
+    <script>
+        // width the page is laid out at in "desktop mode" on a phone / tablet
+        const DESKTOP_WIDTH = 1280;
+        // remember the choice for this tab so a refresh doesn't show the card again
+        try {
+            if (sessionStorage.getItem('desktopMode') === '1') {
+                document.documentElement.classList.add('desktop-mode');
+                document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
+            }
+        } catch (e) {}
+    </script>
 
     <!-- load the fonts early so the text doesn't flash in a fallback font -->
     <link rel="preload" href="Fonts/nk57_monospace/NK57%20Monospace%20Ex%20Lt.otf" as="font" type="font/otf" crossorigin>
@@ -50,9 +62,10 @@
                --hold: when the background starts fading (the text is fully gone by then)
                --fade: how long the background fade takes
                --text-out: how long the text takes to fade out */
-            --hold: 1.4s;
-            --fade: 0.7s;
+            --hold: 0.75s;
+            --fade: 0.6s;
             --text-out: 0.75s;
+            --hold_text: 1.5s;
 
             position: fixed;
             inset: 0;
@@ -79,11 +92,11 @@
             opacity: 0;
             animation:
                 text-in 0.3s ease 0.3s forwards,
-                text-out var(--text-out) ease calc(var(--hold) - var(--text-out)) forwards;
+                text-out var(--text-out) ease calc(var(--hold_text) - var(--text-out)) forwards;
         }
 
         @keyframes splash-out {
-            0% { opacity: 0.99; backdrop-filter: blur(10px); visibility: visible; }
+            0% { opacity: 0.99; background: 0e070005; backdrop-filter: blur(10px); visibility: visible; }
             
             100%   { opacity: 0.1; backdrop-filter: blur(10px);  visibility: hidden; }
         }
@@ -103,9 +116,56 @@
             .splash span {
                 animation:
                     text-in 0.01s ease 0s forwards,
-                    text-out 0.01s ease calc(var(--hold) - 0.01s) forwards;
+                    text-out 0.01s ease calc(var(--hold_text) - 0.01s) forwards;
             }
         }
+
+        /* ---------- DESKTOP NOTICE: shown below 1024px wide until desktop mode is chosen ---------- */
+        .desktop_notice {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;           /* above the splash */
+            align-items: center;
+            justify-content: center;
+            padding: 6vw;
+            background: rgba(14, 7, 0, 0.94);
+            backdrop-filter: blur(6px);
+            color: hsl(0, 100%, 99%);
+            font-family: 'nk57 butter', monospace;
+        }
+        @media (max-width: 1023px) {
+            html:not(.desktop-mode) .desktop_notice { display: flex; }
+        }
+        .desktop_card {
+            max-width: 420px;
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            text-align: center;
+            border: 1px solid hsla(0, 0%, 100%, 0.4);
+            border-radius: 9px;
+            background: #00000067;
+        }
+        .desktop_card_text {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .desktop_btn {
+            font-family: 'nk57 butter', monospace;
+            font-size: 16px;
+            padding: 12px 20px;
+            color: white;
+            background: transparent;
+            border: 1px solid white;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .desktop_btn:hover,
+        .desktop_btn:focus-visible { background: white; color: hsl(0, 0%, 0%); outline: none; }
     </style>
 </head>
 <body>
@@ -113,6 +173,42 @@
         <span>simon says sell</span>
     </div>
 
-    <iframe src="landing.html" title="Simon Says Sell"></iframe>
+    <iframe id="landingFrame" src="landing.html" title="Simon Says Sell"></iframe>
+
+    <div class="desktop_notice" role="dialog" aria-modal="true" aria-labelledby="desktopText">
+        <div class="desktop_card">
+            <p class="desktop_card_text" id="desktopText">this website is best experienced on a desktop</p>
+            <button class="desktop_btn" id="desktopBtn" type="button">switch to desktop mode</button>
+        </div>
+    </div>
+
+    <script>
+        // Browsers only allow an orientation lock while fullscreen, and only after a tap,
+        // so this runs from the button click. Android Chrome supports it; iOS Safari doesn't,
+        // so there the visitor has to rotate their phone themselves.
+        async function enterLandscape() {
+            try {
+                const root = document.documentElement;
+                if (!document.fullscreenElement && root.requestFullscreen) await root.requestFullscreen();
+                if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape');
+            } catch (e) {}
+        }
+
+        document.getElementById('desktopBtn').addEventListener('click', () => {
+            document.documentElement.classList.add('desktop-mode');
+            document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
+            try { sessionStorage.setItem('desktopMode', '1'); } catch (e) {}
+
+            // touch devices only: go fullscreen and lock to landscape (see enterLandscape)
+            if (matchMedia('(pointer: coarse)').matches) enterLandscape();
+
+            // best effort: also tell the page inside the iframe, so its own card (if it has one)
+            // doesn't show on a narrow desktop window. Only works when both files share an origin.
+            try {
+                document.getElementById('landingFrame').contentDocument
+                    .documentElement.classList.add('desktop-mode');
+            } catch (e) {}
+        });
+    </script>
 </body>
 </html>
