@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="UTF-8">
-    <meta name="viewport" id="viewportMeta" initial-scale=1.0 maximum-scale=1.0 user-scalable="no">
+    <meta name="viewport" content="device-width"  id="viewportMeta" initial-scale=1.0 maximum-scale=1.0 user-scalable="no">
     <title>Simon Says Sell</title>
 
     <script>
@@ -255,7 +255,7 @@
         document.getElementById('desktopBtn').addEventListener('click', () => {
             document.documentElement.requestFullscreen();
             document.documentElement.classList.add('desktop-mode');
-            document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
+            // document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
             try { sessionStorage.setItem('desktopMode', '1'); } catch (e) {}
 
             // best effort: also tell the page inside the iframe, so its own card (if it has one)
