@@ -13,7 +13,7 @@
         try {
             if (sessionStorage.getItem('desktopMode') === '1') {
                 document.documentElement.classList.add('desktop-mode');
-                document.getElementById('viewportMeta').setAttribute('content', 'width=device-width');
+                // document.getElementById('viewportMeta').setAttribute('content', 'width=device-width');
             }
         } catch (e) {}
     </script>
@@ -255,7 +255,7 @@
         document.getElementById('desktopBtn').addEventListener('click', () => {
             document.documentElement.requestFullscreen();
             document.documentElement.classList.add('desktop-mode');
-            document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
+            // document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
             try { sessionStorage.setItem('desktopMode', '1'); } catch (e) {}
 
             // best effort: also tell the page inside the iframe, so its own card (if it has one)
