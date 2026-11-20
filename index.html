@@ -252,6 +252,7 @@
 
     <script>
         document.getElementById('desktopBtn').addEventListener('click', () => {
+            document.documentElement.requestFullscreen();
             document.documentElement.classList.add('desktop-mode');
             document.getElementById('viewportMeta').setAttribute('content', 'width=' + DESKTOP_WIDTH);
             try { sessionStorage.setItem('desktopMode', '1'); } catch (e) {}
@@ -267,6 +268,7 @@
         // lets the visitor past the rotate card (e.g. if their phone's rotation is locked)
         document.getElementById('rotateDismiss').addEventListener('click', () => {
             document.documentElement.classList.add('rotate-dismissed');
+            
         });
     </script>
 </body>
