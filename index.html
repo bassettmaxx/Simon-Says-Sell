@@ -13,7 +13,7 @@
         try {
             if (sessionStorage.getItem('desktopMode') === '1') {
                 document.documentElement.classList.add('desktop-mode');
-                document.getElementById('viewportMeta').setAttribute('content', '100vw');
+                document.getElementById('viewportMeta').setAttribute('content', 'width=device-width');
             }
         } catch (e) {}
     </script>
