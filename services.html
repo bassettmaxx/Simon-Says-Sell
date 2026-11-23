@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Says Sell</title>
+</head>
+
+<style>
+
+    @font-face {
+            font-family: 'nk57';
+            src: url('Fonts/nk57_monospace/NK57\ Monospace\ Cd\ Bk.otf') format('opentype');
+            font-display: swap;
+    }
+
+    @font-face {
+            font-family: 'nk57 reg';
+            src: url('Fonts\\nk57_monospace\\NK57 Monospace Sc Lt.otf') format('opentype');
+    }
+
+    @font-face {
+        font-family: 'nk57 butter';
+        src: url('Fonts\\nk57_monospace\\NK57 Monospace Ex Lt.otf') format('opentype');
+    }
+
+    html{ margin-top: 33vh; font-family:'nk57 butter';  background: none; display: flex;   min-height: 100vh; width: 100vw; max-height: 100vh;  color: hsl(0, 100%, 99%); max-width:100vw; overflow-x: hidden; text-align: center; align-items: center; justify-content: center; }
+    
+    body{grid-template-rows: 33vh 33vh 33vh (auto auto); display: grid; width: 90%;  }
+
+    .service{background: #0000007a; border-radius: 3px; margin-bottom: 3vh ;}
+
+    .service_title{align-self: center; display: grid; padding: 3vh;}
+
+    .service_hint {
+        margin-top: -33px;
+        font-size: clamp(16px, 1.4vw, 20px);
+        opacity: 0.6;
+    }
+
+    .service_display{grid-template-columns: auto auto auto; display:grid;  height: auto; max-height: max-content;  min-height: 33vh; padding: 4.2px; font-family: 'nk57 reg'; } 
+
+    .service_price{font-size: 84px;  display: flex; flex-direction: column; justify-content: flex-end; height: 50%;}
+
+    .package_title{font-size: 21px; display: grid; justify-content: center; }
+
+    .package_info{width: 33vw; text-align: center; }
+
+</style>
+
+<body style="background: #0e070005; color: hsl(0, 100%, 99%); z-index:1000; overflow: hidden; padding-top: 16vh; ">
+    <section class="service">
+        <h1 class="service_title"> Revival Festival </h1>
+        <p class="service_hint" style=" font-size: 21px; font-family: 'nk57 reg'; margin-bottom: 50px;" >get more customers on the 1st & 15th of each month!</p>
+        <section class="service_display">
+            <div class="package_title">Commission  <div class="package_info">10% revenue cut AFTER <a style="color: white;" href="debut.html#thresh" target="_self" rel="noopener noreferrer">threshold</a> <br>( on festival days only )</div> <div class="service_price">10%</div> </div>
+           <div>or</div>
+            <div class="package_title" >Subscription   <div class="package_info">best choice if the festival brings you R10k or more p/m</div> <div class="service_price" >R1k p/m</div>  </div>
+        </section>
+    </section>
+
+    <section class="service">
+        <h1 class="service_title" >Advert Supply </h1>
+        <section class="service_display" style="text-align: initial;" >
+            <div style="width: 50vw; font-size: 21px;" >Get one tailored advert each & every month you're subscribed! <br></br>
+
+                Let us handle everything, or step in and direct the production yourself!   <br></br> </div>
+            
+            <div class="service_price" style="grid-column: 1; margin-top: auto;" >R1k p/m</div>
+        </section>
+    </section>
+
+    <section class="service">
+        <h1 class="service_title" >Commission </h1>
+        <section class="service_display"  style="text-align: initial;">
+            <div>Once-off Advert Production. <div class="service_price" >per basis</div>  </div>
+            
+        </section>
+    </section>
+    
+</body>
+
+</html>
